@@ -10,7 +10,7 @@ st.set_page_config(
 )
 
 # 2. تفعيل الذكاء الاصطناعي (تأكد من وضع مفتاحك هنا)
-API_KEY = "ضع_مفتاحك_الحقيقي_هنا"
+API_KEY = "AIzaSyAEzwA6lp7Pay2_hQp4ObLHhKJ5Q9QrSrU"
 try:
     genai.configure(api_key=API_KEY)
     model = genai.GenerativeModel('gemini-2.5-flash')
