@@ -5,7 +5,7 @@ import google.generativeai as genai
 st.set_page_config(page_title="TURKI SUFYANI Platform", page_icon="🚀", layout="wide")
 
 # ⚠️ ضع مفتاحك الجديد هنا
-API_KEY = "ضع_مفتاحك_الجديد_هنا"
+API_KEY = "AIzaSyAI1y3ZcK1RgCICJKuF3ACrkPcAYzUb6GM"
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
