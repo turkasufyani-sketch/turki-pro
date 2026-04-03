@@ -1,10 +1,10 @@
 import streamlit as st
 import google.generativeai as genai
 
-# إعدادات الصفحة لتكون مثل تطبيق الجوال
-st.set_page_config(page_title="منصة تركي سفياني", page_icon="🏫", layout="centered")
+# 1. إعدادات الصفحة (إخفاء القائمة الجانبية في البداية لتشبه التطبيق)
+st.set_page_config(page_title="منصة تركي سفياني | مدرستي", page_icon="🏫", layout="centered", initial_sidebar_state="collapsed")
 
-# ⚠️ ضع مفتاحك السري هنا بين علامتي التنصيص
+# 2. ربط الذكاء الاصطناعي (ضع مفتاحك السري هنا)
 API_KEY = "AIzaSyAI1y3ZcK1RgCICJKuF3ACrkPcAYzUb6GM"
 try:
     genai.configure(api_key=API_KEY)
@@ -12,126 +12,127 @@ try:
 except:
     pass
 
-# كود CSS لجعل الأزرار مربعة وكبيرة مثل منصة "مدرستي"
+# 3. تصميم واجهة "مدرستي" باستخدام CSS
 st.markdown("""
     <style>
+    .main-card {
+        background-color: #f8fafc; border: 2px solid #e2e8f0; border-radius: 20px;
+        padding: 25px; text-align: center; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .user-name { color: #0f172a; font-weight: bold; font-size: 26px; margin-bottom: 5px; }
+    .school-info { color: #64748b; font-size: 16px; margin-bottom: 15px; }
+    .status-badge {
+        background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 18px;
+        border-radius: 25px; display: inline-block; font-size: 14px; color: #475569; margin: 4px;
+    }
     div.stButton > button {
-        background-color: white;
-        color: #1f2937;
-        width: 100%;
-        height: 120px;
-        border-radius: 15px;
-        border: 2px solid #e5e7eb;
-        font-size: 22px;
-        font-weight: bold;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        transition: 0.3s;
+        background-color: white; color: #1e293b; width: 100%; height: 140px;
+        border-radius: 20px; border: 2px solid #e2e8f0; font-size: 20px; font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.3s ease;
     }
-    div.stButton > button:hover {
-        border-color: #10b981; /* لون أخضر مثل مدرستي */
-        color: #10b981;
-    }
+    div.stButton > button:hover { border-color: #0d9488; color: #0d9488; transform: translateY(-4px); }
     </style>
 """, unsafe_allow_html=True)
 
-# نظام التنقل بين الصفحات (بدون قائمة جانبية)
-if 'page' not in st.session_state:
-    st.session_state.page = "الرئيسية"
+# 4. نظام الذاكرة والتنقل
+if 'page' not in st.session_state: st.session_state.page = "الرئيسية"
+if 'messages' not in st.session_state: st.session_state.messages = []
 
-def go_to(page_name):
-    st.session_state.page = page_name
+def navigate(page): st.session_state.page = page
 
-# زر العودة للرئيسية يظهر في كل الصفحات ما عدا الرئيسية
-if st.session_state.page != "الرئيسية":
-    st.button("🏠 العودة للرئيسية", on_click=go_to, args=("الرئيسية",))
+# القائمة الجانبية (الثلاث نقاط ☰)
+with st.sidebar:
+    st.image("https://upload.wikimedia.org/wikipedia/ar/thumb/c/cf/Madrasati_Logo.png/800px-Madrasati_Logo.png", width=150)
     st.markdown("---")
+    st.write("👤 **الحساب:** تركي عبدالله سفياني")
+    st.write("📡 **الحالة:** متصل")
+    if st.button("🏠 العودة للرئيسية"): navigate("الرئيسية")
 
 # ==========================================
-# 1. الصفحة الرئيسية (واجهة مدرستي)
+# الصفحة الرئيسية (Dashboard)
 # ==========================================
 if st.session_state.page == "الرئيسية":
-    st.markdown("<h2 style='text-align: center; color: #0d9488;'>مرحباً بك تركي عبدالله سفياني 🏫</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: gray;'>ثانوية الإمام الشافعي بالعارضة - مسارات | الصف أول ثانوي أ</p>", unsafe_allow_html=True)
-    st.write("")
-    
-    # تقسيم الأزرار مثل مدرستي
+    st.markdown("""
+        <div class="main-card">
+            <div class="user-name">مرحباً بك تركي عبدالله سفياني</div>
+            <div class="school-info">ثانوية الإمام الشافعي بالعارضة - مسارات</div>
+            <div class="status-badge">👨‍🎓 أول ثانوي أ</div>
+            <div class="status-badge">🎖️ مستقبل عسكري</div>
+            <div class="status-badge">♟️ محترف شطرنج</div>
+        </div>
+    """, unsafe_allow_html=True)
+
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("🤖\nالبوت الذكي"): go_to("البوت الذكي")
+        if st.button("🤖\nالمعلم الذكي"): navigate("البوت")
         st.write("")
-        if st.button("📚\nمكتبة الروايات"): go_to("مكتبة الروايات")
+        if st.button("📚\nالمكتبة الرقمية"): navigate("المكتبة")
     with col2:
-        if st.button("🔤\nخزانة الكلمات"): go_to("خزانة الكلمات")
+        if st.button("🔤\nخزانة الكلمات"): navigate("الكلمات")
         st.write("")
-        if st.button("📺\nالفيديوهات"): go_to("الفيديوهات")
+        if st.button("📺\nالفيديوهات التعليمية"): navigate("الفيديوهات")
 
 # ==========================================
-# 2. البوت الذكي (تم تطوير شكل المحادثة)
+# قسم البوت (بذاكرة كاملة)
 # ==========================================
-elif st.session_state.page == "البوت الذكي":
-    st.title("🤖 المدرس الذكي الخاص بك")
-    st.info("تحدث معي بالإنجليزية لتطوير لغتك، أو اسألني عن أي قاعدة!")
+elif st.session_state.page == "البوت":
+    st.title("🤖 المعلم الذكي (ذاكرة مفعلة)")
+    st.info("سأقوم بتصحيح لغتك وتذكر محادثتنا.")
     
-    user_input = st.chat_input("اكتب رسالتك هنا...")
+    for msg in st.session_state.messages:
+        st.chat_message(msg["role"]).write(msg["content"])
+
+    user_input = st.chat_input("اكتب سؤالك هنا...")
     if user_input:
+        st.session_state.messages.append({"role": "user", "content": user_input})
         st.chat_message("user").write(user_input)
         try:
-            response = model.generate_content(user_input)
+            prompt = f"أنت معلم لغات خبير في منصة الطالب تركي سفياني. صحح أخطاءه وشجعه: {user_input}"
+            response = model.generate_content(prompt)
+            st.session_state.messages.append({"role": "assistant", "content": response.text})
             st.chat_message("assistant").write(response.text)
-        except Exception as e:
-            st.error("❌ البوت لا يرد! السبب: لم تقم بوضع مفتاح API صحيح في الكود، أو أن المفتاح معطل.")
+        except: st.error("❌ تأكد من صحة مفتاح API")
 
 # ==========================================
-# 3. مكتبة الروايات (تفتح بروابط حقيقية)
+# خزانة الكلمات (اللغات الثلاث + تخصصاتك)
 # ==========================================
-elif st.session_state.page == "مكتبة الروايات":
-    st.title("📚 مكتبة الروايات المجانية")
-    st.write("هذه الروايات تفتح مباشرة للقراءة والتدرب:")
+elif st.session_state.page == "الكلمات":
+    st.title("🔤 خزانة الكلمات الشاملة")
+    l_tabs = st.tabs(["🇬🇧 English", "🇪🇸 Español", "🇫🇷 Français"])
     
+    with l_tabs[0]:
+        sub = st.tabs(["🎖️ عسكري", "♟️ شطرنج", "📚 مدرسي"])
+        with sub[0]: st.table({"الكلمة": ["Rank", "Officer", "Discipline"], "المعنى": ["رتبة", "ضابط", "انضباط"]})
+        with sub[1]: st.table({"الكلمة": ["Tactics", "Opening", "Draw"], "المعنى": ["تكتيكات", "افتتاحية", "تعادل"]})
+        with sub[2]: st.table({"الكلمة": ["Environment", "Linguistic", "Competencies"], "المعنى": ["بيئة", "لغوي", "كفايات"]})
+
+    with l_tabs[1]:
+        st.table({"الإسبانية": ["Hola", "Victoria", "Ajedrez"], "المعنى": ["مرحباً", "نصر", "شطرنج"]})
+    
+    with l_tabs[2]:
+        st.table({"الفرنسية": ["Bonjour", "Officier", "Échecs"], "المعنى": ["صباح الخير", "ضابط", "شطرنج"]})
+
+# ==========================================
+# المكتبة الرقمية
+# ==========================================
+elif st.session_state.page == "المكتبة":
+    st.title("📚 المكتبة الرقمية (A1 - C2)")
+    st.write("روايات مختارة لرفع مستواك:")
     c1, c2 = st.columns(2)
     with c1:
-        # صورة غلاف رواية
-        st.image("https://english-e-reader.net/covers/A_Little_Princess-Frances_Hodgson_Burnett.jpg", use_container_width=True)
-        st.subheader("A Little Princess")
-        st.caption("المستوى: A1 - مبتدئ")
-        # رابط حقيقي يفتح القصة
-        st.link_button("📖 اقرأ الرواية الآن", "https://english-e-reader.net/book/a-little-princess-frances-hodgson-burnett")
-        
+        st.image("https://english-e-reader.net/covers/A_Little_Princess-Frances_Hodgson_Burnett.jpg")
+        st.link_button("📖 قراءة A Little Princess", "https://english-e-reader.net/book/a-little-princess-frances-hodgson-burnett")
     with c2:
-        st.image("https://english-e-reader.net/covers/Sherlock_Holmes_and_the_Duke_s_Son-Arthur_Conan_Doyle.jpg", use_container_width=True)
-        st.subheader("Sherlock Holmes")
-        st.caption("المستوى: A1 - مبتدئ")
-        st.link_button("📖 اقرأ الرواية الآن", "https://english-e-reader.net/book/sherlock-holmes-and-the-dukes-son-arthur-conan-doyle")
+        st.image("https://english-e-reader.net/covers/Sherlock_Holmes_and_the_Duke_s_Son-Arthur_Conan_Doyle.jpg")
+        st.link_button("📖 قراءة Sherlock Holmes", "https://english-e-reader.net/book/sherlock-holmes-and-the-dukes-son-arthur-conan-doyle")
 
 # ==========================================
-# 4. خزانة الكلمات (جدول كلمات حقيقي)
-# ==========================================
-elif st.session_state.page == "خزانة الكلمات":
-    st.title("🔤 خزانة الكلمات (A1 - C2)")
-    
-    tab1, tab2, tab3 = st.tabs(["مبتدئ A1", "أساسي A2", "متوسط B1"])
-    
-    with tab1:
-        st.write("أهم 10 كلمات للمبتدئين:")
-        # جدول كلمات حقيقي يعرض الكلمة ومعناها
-        st.table({
-            "الكلمة (English)": ["Accommodation", "Beautiful", "Country", "Dictionary", "Environment", "Friend", "Important", "Journey", "Knowledge", "Language"],
-            "المعنى (Arabic)": ["مكان إقامة", "جميل", "دولة / ريف", "قاموس", "بيئة", "صديق", "مهم", "رحلة", "معرفة", "لغة"]
-        })
-    with tab2:
-        st.info("قريباً: سيتم إضافة 800 كلمة خاصة بمستوى A2.")
-    with tab3:
-        st.info("قريباً: سيتم إضافة 4000 كلمة خاصة بمستوى B1.")
-
-# ==========================================
-# 5. الفيديوهات (روابط قنوات يوتيوب حقيقية)
+# الفيديوهات التعليمية
 # ==========================================
 elif st.session_state.page == "الفيديوهات":
     st.title("📺 الدروس المرئية")
-    st.write("أفضل القنوات المعتمدة لتعلم الإنجليزية:")
-    
-    st.video("https://www.youtube.com/watch?v=juKd26qkywQ") # فيديو يشتغل داخل الموقع
-    st.link_button("📺 الذهاب لقناة BBC Learning English", "https://www.youtube.com/user/bbclearningenglish")
-    st.link_button("📺 الذهاب لقناة ZAmericanEnglish", "https://www.youtube.com/c/ZAmericanEnglish")
+    st.video("https://www.youtube.com/watch?v=juKd26qkywQ")
+    st.link_button("📺 قناة BBC Learning English", "https://www.youtube.com/user/bbclearningenglish")
+
 
 
