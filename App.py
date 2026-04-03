@@ -5,7 +5,7 @@ import google.generativeai as genai
 # 1. إعدادات المنصة الأساسية
 # ==========================================
 st.set_page_config(
-    page_title="منصة 350 الخاصة",
+    page_title="منصة TURKE الخاصة",
     page_icon="🔒",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -19,7 +19,7 @@ if 'logged_in' not in st.session_state:
 
 if not st.session_state.logged_in:
     st.markdown("<h1 style='text-align: center; color: #0f766e;'>🔒 بوابة الدخول</h1>", unsafe_allow_html=True)
-    st.write("غير مسموح بالدخول لغير المصرح لهم. أدخل بياناتك يا 350.")
+    st.write("غير مسموح بالدخول لغير المصرح لهم. أدخل بياناتك يا TURKE.")
     
     username = st.text_input("اسم المستخدم:")
     password = st.text_input("كلمة المرور:", type="password")
@@ -37,7 +37,7 @@ if not st.session_state.logged_in:
 # ==========================================
 
 # إعداد الذكاء الاصطناعي (مفتاحك هنا)
-API_KEY = "ضع_مفتاحك_الحقيقي_هنا"
+API_KEY = "AIzaSyAEzwA6lp7Pay2_hQp4ObLHhKJ5Q9QrSrU"
 try:
     genai.configure(api_key=API_KEY)
     model = genai.GenerativeModel('gemini-2.5-flash')
