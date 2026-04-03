@@ -1,108 +1,137 @@
 import streamlit as st
 import google.generativeai as genai
 
-# إعدادات المنصة
-st.set_page_config(page_title="TURKI SUFYANI Platform", page_icon="🚀", layout="wide")
+# إعدادات الصفحة لتكون مثل تطبيق الجوال
+st.set_page_config(page_title="منصة تركي سفياني", page_icon="🏫", layout="centered")
 
-# ⚠️ ضع مفتاحك الجديد هنا
+# ⚠️ ضع مفتاحك السري هنا بين علامتي التنصيص
 API_KEY = "AIzaSyAI1y3ZcK1RgCICJKuF3ACrkPcAYzUb6GM"
-genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-2.5-flash')
+try:
+    genai.configure(api_key=API_KEY)
+    model = genai.GenerativeModel('gemini-2.5-flash')
+except:
+    pass
 
-# القائمة الجانبية
-with st.sidebar:
-    st.title("📂 أقسام المنصة")
-    choice = st.radio("انتقل إلى:", [
-        "🏠 الرئيسية", 
-        "🗣️ البوت الذكي", 
-        "📚 مكتبة الكتب", 
-        "📖 قسم القراءة", 
-        "📺 فيديوهات تعليمية", 
-        "🔤 خزانة الكلمات"
-    ])
+# كود CSS لجعل الأزرار مربعة وكبيرة مثل منصة "مدرستي"
+st.markdown("""
+    <style>
+    div.stButton > button {
+        background-color: white;
+        color: #1f2937;
+        width: 100%;
+        height: 120px;
+        border-radius: 15px;
+        border: 2px solid #e5e7eb;
+        font-size: 22px;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: 0.3s;
+    }
+    div.stButton > button:hover {
+        border-color: #10b981; /* لون أخضر مثل مدرستي */
+        color: #10b981;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# نظام التنقل بين الصفحات (بدون قائمة جانبية)
+if 'page' not in st.session_state:
+    st.session_state.page = "الرئيسية"
+
+def go_to(page_name):
+    st.session_state.page = page_name
+
+# زر العودة للرئيسية يظهر في كل الصفحات ما عدا الرئيسية
+if st.session_state.page != "الرئيسية":
+    st.button("🏠 العودة للرئيسية", on_click=go_to, args=("الرئيسية",))
     st.markdown("---")
-    st.info("Developed by: 350 (Turki) 🎖️")
 
-# 1. الرئيسية
-if choice == "🏠 الرئيسية":
-    st.title("TURKI SUFYANI Platform 🚀")
-    st.subheader("منصتك المتكاملة لإتقان الإنجليزية، الإسبانية، والفرنسية")
-    st.write("اختر القسم الذي تريده من القائمة الجانبية للبدء.")
-
-# 2. البوت الذكي
-elif choice == "🗣️ البوت الذكي":
-    st.title("🤖 مدرب اللغات الذكي")
-    st.write("اطلب مني تصحيح القواعد، أو التدرب على محادثة بالإنجليزية، الإسبانية، أو الفرنسية.")
-    user_input = st.chat_input("تحدث معي هنا...")
-    if user_input:
-        try:
-            instruction = "أنت معلم لغات خبير متعدد اللغات. صحح الأخطاء بدقة واشرح القواعد إذا لزم الأمر: "
-            response = model.generate_content(instruction + user_input)
-            st.success(response.text)
-        except Exception as e:
-            st.error("⚠️ عذراً، تأكد من وضع مفتاح API صحيح.")
-
-# 3. مكتبة الكتب
-elif choice == "📚 مكتبة الكتب":
-    st.title("📚 المكتبة الرقمية")
-    lang = st.radio("اختر اللغة:", ["🇬🇧 الإنجليزية", "🇪🇸 الإسبانية", "🇫🇷 الفرنسية"], horizontal=True)
+# ==========================================
+# 1. الصفحة الرئيسية (واجهة مدرستي)
+# ==========================================
+if st.session_state.page == "الرئيسية":
+    st.markdown("<h2 style='text-align: center; color: #0d9488;'>مرحباً بك تركي عبدالله سفياني 🏫</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: gray;'>ثانوية الإمام الشافعي بالعارضة - مسارات | الصف أول ثانوي أ</p>", unsafe_allow_html=True)
+    st.write("")
     
-    tabs = st.tabs(["A1", "A2", "B1", "B2", "C1", "C2"])
-    if lang == "🇬🇧 الإنجليزية":
-        with tabs[0]: st.button("📖 تحميل كتب الإنجليزية A1")
-        with tabs[3]: st.button("📖 تحميل كتب الإنجليزية B2")
-    elif lang == "🇪🇸 الإسبانية":
-        with tabs[0]: st.button("📖 تحميل كتب الإسبانية A1")
-        with tabs[3]: st.button("📖 تحميل كتب الإسبانية B2")
-    else:
-        with tabs[0]: st.button("📖 تحميل كتب الفرنسية A1")
-        with tabs[3]: st.button("📖 تحميل كتب الفرنسية B2")
-
-# 4. قسم القراءة
-elif choice == "📖 قسم القراءة":
-    st.title("📖 تدريبات القراءة")
-    lang = st.radio("اختر اللغة:", ["🇬🇧 الإنجليزية", "🇪🇸 الإسبانية", "🇫🇷 الفرنسية"], horizontal=True)
-    
-    tabs = st.tabs(["A1", "A2", "B1", "B2", "C1", "C2"])
-    if lang == "🇬🇧 الإنجليزية":
-        with tabs[0]: st.info("Hello! My name is Turki. I am a student. (English A1)")
-    elif lang == "🇪🇸 الإسبانية":
-        with tabs[0]: st.info("¡Hola! Me llamo Turki. Soy estudiante. (Español A1)")
-    else:
-        with tabs[0]: st.info("Bonjour ! Je m'appelle Turki. Je suis étudiant. (Français A1)")
-        with tabs[3]: st.info("Le développement rapide de la technologie a changé nos vies. (Français B2)")
-
-# 5. فيديوهات تعليمية
-elif choice == "📺 فيديوهات تعليمية":
-    st.title("📺 مكتبة المرئيات")
-    lang = st.radio("اختر اللغة:", ["🇬🇧 الإنجليزية", "🇪🇸 الإسبانية", "🇫🇷 الفرنسية"], horizontal=True)
-    
-    if lang == "🇬🇧 الإنجليزية":
-        st.subheader("مصادر اللغة الإنجليزية")
-        st.markdown("- [BBC Learning English](https://www.bbc.co.uk/learningenglish/)")
-    elif lang == "🇪🇸 الإسبانية":
-        st.subheader("مصادر اللغة الإسبانية")
-        st.markdown("- [Dreaming Spanish](https://www.dreamingspanish.com/)")
-    else:
-        st.subheader("مصادر اللغة الفرنسية")
-        st.markdown("- [TV5MONDE - Apprendre le français](https://apprendre.tv5monde.com/)")
-        st.markdown("- [Français avec Pierre (YouTube)](https://www.youtube.com/c/FrancaisavecPierre)")
-
-# 6. خزانة الكلمات
-elif choice == "🔤 خزانة الكلمات":
-    st.title("🔤 بنك المفردات (Vocabulary Target)")
-    lang = st.radio("اختر المسار:", ["🇬🇧 الإنجليزية", "🇪🇸 الإسبانية", "🇫🇷 الفرنسية"], horizontal=True)
-    
-    st.write(f"**أهدافك في {lang}:**")
-    col1, col2, col3 = st.columns(3)
-    
+    # تقسيم الأزرار مثل مدرستي
+    col1, col2 = st.columns(2)
     with col1:
-        st.metric(label="مستوى A1", value="1,500 كلمة")
-        st.metric(label="مستوى A2", value="800 كلمة")
+        if st.button("🤖\nالبوت الذكي"): go_to("البوت الذكي")
+        st.write("")
+        if st.button("📚\nمكتبة الروايات"): go_to("مكتبة الروايات")
     with col2:
-        st.metric(label="مستوى B1", value="4,000 كلمة")
-        st.metric(label="مستوى B2", value="2,500 كلمة")
-    with col3:
-        st.metric(label="مستوى C1", value="8,000 كلمة")
-        st.metric(label="مستوى C2", value="5,000 كلمة")
+        if st.button("🔤\nخزانة الكلمات"): go_to("خزانة الكلمات")
+        st.write("")
+        if st.button("📺\nالفيديوهات"): go_to("الفيديوهات")
+
+# ==========================================
+# 2. البوت الذكي (تم تطوير شكل المحادثة)
+# ==========================================
+elif st.session_state.page == "البوت الذكي":
+    st.title("🤖 المدرس الذكي الخاص بك")
+    st.info("تحدث معي بالإنجليزية لتطوير لغتك، أو اسألني عن أي قاعدة!")
+    
+    user_input = st.chat_input("اكتب رسالتك هنا...")
+    if user_input:
+        st.chat_message("user").write(user_input)
+        try:
+            response = model.generate_content(user_input)
+            st.chat_message("assistant").write(response.text)
+        except Exception as e:
+            st.error("❌ البوت لا يرد! السبب: لم تقم بوضع مفتاح API صحيح في الكود، أو أن المفتاح معطل.")
+
+# ==========================================
+# 3. مكتبة الروايات (تفتح بروابط حقيقية)
+# ==========================================
+elif st.session_state.page == "مكتبة الروايات":
+    st.title("📚 مكتبة الروايات المجانية")
+    st.write("هذه الروايات تفتح مباشرة للقراءة والتدرب:")
+    
+    c1, c2 = st.columns(2)
+    with c1:
+        # صورة غلاف رواية
+        st.image("https://english-e-reader.net/covers/A_Little_Princess-Frances_Hodgson_Burnett.jpg", use_container_width=True)
+        st.subheader("A Little Princess")
+        st.caption("المستوى: A1 - مبتدئ")
+        # رابط حقيقي يفتح القصة
+        st.link_button("📖 اقرأ الرواية الآن", "https://english-e-reader.net/book/a-little-princess-frances-hodgson-burnett")
+        
+    with c2:
+        st.image("https://english-e-reader.net/covers/Sherlock_Holmes_and_the_Duke_s_Son-Arthur_Conan_Doyle.jpg", use_container_width=True)
+        st.subheader("Sherlock Holmes")
+        st.caption("المستوى: A1 - مبتدئ")
+        st.link_button("📖 اقرأ الرواية الآن", "https://english-e-reader.net/book/sherlock-holmes-and-the-dukes-son-arthur-conan-doyle")
+
+# ==========================================
+# 4. خزانة الكلمات (جدول كلمات حقيقي)
+# ==========================================
+elif st.session_state.page == "خزانة الكلمات":
+    st.title("🔤 خزانة الكلمات (A1 - C2)")
+    
+    tab1, tab2, tab3 = st.tabs(["مبتدئ A1", "أساسي A2", "متوسط B1"])
+    
+    with tab1:
+        st.write("أهم 10 كلمات للمبتدئين:")
+        # جدول كلمات حقيقي يعرض الكلمة ومعناها
+        st.table({
+            "الكلمة (English)": ["Accommodation", "Beautiful", "Country", "Dictionary", "Environment", "Friend", "Important", "Journey", "Knowledge", "Language"],
+            "المعنى (Arabic)": ["مكان إقامة", "جميل", "دولة / ريف", "قاموس", "بيئة", "صديق", "مهم", "رحلة", "معرفة", "لغة"]
+        })
+    with tab2:
+        st.info("قريباً: سيتم إضافة 800 كلمة خاصة بمستوى A2.")
+    with tab3:
+        st.info("قريباً: سيتم إضافة 4000 كلمة خاصة بمستوى B1.")
+
+# ==========================================
+# 5. الفيديوهات (روابط قنوات يوتيوب حقيقية)
+# ==========================================
+elif st.session_state.page == "الفيديوهات":
+    st.title("📺 الدروس المرئية")
+    st.write("أفضل القنوات المعتمدة لتعلم الإنجليزية:")
+    
+    st.video("https://www.youtube.com/watch?v=juKd26qkywQ") # فيديو يشتغل داخل الموقع
+    st.link_button("📺 الذهاب لقناة BBC Learning English", "https://www.youtube.com/user/bbclearningenglish")
+    st.link_button("📺 الذهاب لقناة ZAmericanEnglish", "https://www.youtube.com/c/ZAmericanEnglish")
+
 
