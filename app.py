@@ -1,3 +1,3 @@
 import streamlit as st
 
-st.title("🚀 شغال")
+st.title("🚀 تطبيقك شغال") 
